@@ -10,6 +10,7 @@ type Tag struct {
 	Id    int    `xorm:"int(11) NOT NULL autoincr" json:"id"`
 	Name  string `xorm:"varchar(32) NOT NULL" json:"name"`
 	Order int    `xorm:"int(10) NOT NULL" json:"order"`
+	Color int    `xorm:"int(15) NOT NULL" json:"color"`
 }
 
 var DefaultTag = &Tag{}

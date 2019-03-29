@@ -14,7 +14,7 @@ func main() {
 	//server.AppendFile("data/movie.json", ",[1,2,3]")
 
 	url := ""
-	for i := 10; i < 11; i++ {
+	for i := 16; i < 17; i++ {
 		start := i * comhelper.StringToInt(server.PAGELIMIT)
 		url = server.BASEURL + server.TAG + server.SORT + "&page_limit=" + server.PAGELIMIT + "&page_start=" + comhelper.IntToString(start)
 		err := server.GetMovieList(url)
