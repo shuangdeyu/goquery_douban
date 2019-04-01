@@ -11,7 +11,7 @@ type Movie struct {
 	Film_id       int     `xorm:"int(11) NOT NULL" json:"film_id"`
 	Name          string  `xorm:"varchar(50) NOT NULL" json:"name"`
 	Tags          string  `xorm:"varchar(50) NOT NULL" json:"tags"`
-	Img           string  `xorm:"varchar(200) NOT NULL" json:"img"`
+	Img           string  `xorm:"text NOT NULL" json:"img"`
 	Year          string  `xorm:"varchar(10) NOT NULL" json:"year"`
 	Rating_num    float64 `xorm:"float(16,1) NOT NULL" json:"rating_num"`
 	Rating_people int     `xorm:"int(10) NOT NULL" json:"rating_people"`
