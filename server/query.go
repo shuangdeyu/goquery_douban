@@ -1,12 +1,16 @@
 package server
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/kataras/iris/core/errors"
 	"helper_go/comhelper"
+	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -14,8 +18,9 @@ import (
 const (
 	// https://movie.douban.com/explore#!type=movie&tag=热门&sort=recommend&page_limit=20&page_start=0
 	BASEURL = "https://movie.douban.com/j/search_subjects?type=movie"
-	//TAG        = "&tag=热门"
-	TAG  = "&tag=经典"
+	//TAG  = "&tag=热门"
+	//TAG  = "&tag=经典"
+	TAG  = "&tag=豆瓣高分"
 	SORT = "&sort=recommend" // 按热度
 	//SORT       = "&sort=rank" // 按评价
 	PAGELIMIT  = "20"
@@ -97,6 +102,13 @@ func GetMovieInfo(url string) *MovieParam {
 		stars_one := s.Find(".stars1+div+span").Text()
 		param.Stars_one = comhelper.StringToFloat(stars_one[0:len(stars_one)-1], 64)
 
+		// 图片转换成base64
+		img_url, _ := _download_img(param.Img)
+		new_img, err := comhelper.ImgToBase64(img_url)
+		if err == nil && new_img != "" {
+			param.Img = new_img
+		}
+
 		s.Find("#info").Each(func(ii int, ss *goquery.Selection) {
 			info, _ := ss.Html()
 			param.Director = ss.Find("a[rel*=directedBy]").Text()
@@ -131,4 +143,30 @@ func GetMovieInfo(url string) *MovieParam {
 	})
 
 	return &param
+}
+
+/**
+ * 下载网络图片到本地
+ */
+func _download_img(url string) (img string, err error) {
+	path := strings.Split(url, "/")
+	var name string
+	if len(path) > 1 {
+		name = path[len(path)-1]
+	}
+	//fmt.Println(name)
+	dir := "./data/images/"
+	if is, _ := comhelper.IsDir(dir); !is {
+		err = os.MkdirAll(dir, 0755)
+		if err != nil {
+			return "", err
+		}
+	}
+	out, err := os.Create(dir + name)
+	defer out.Close()
+	resp, err := http.Get(url)
+	defer resp.Body.Close()
+	pix, err := ioutil.ReadAll(resp.Body)
+	_, err = io.Copy(out, bytes.NewReader(pix))
+	return dir + name, err
 }

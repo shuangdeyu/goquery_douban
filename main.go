@@ -14,7 +14,7 @@ func main() {
 	//server.AppendFile("data/movie.json", ",[1,2,3]")
 
 	url := ""
-	for i := 25; i < 26; i++ {
+	for i := 0; i < 1; i++ { // 爬取进度，已爬取
 		start := i * comhelper.StringToInt(server.PAGELIMIT)
 		url = server.BASEURL + server.TAG + server.SORT + "&page_limit=" + server.PAGELIMIT + "&page_start=" + comhelper.IntToString(start)
 		err := server.GetMovieList(url)
